@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -65,6 +67,11 @@ public class AuthController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = jwtUtil.generateToken(userDetails);
 
+            // Roles como lista para consistencia con el claim del JWT
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(a -> a.getAuthority())
+                    .collect(Collectors.toList());
+
             // Log de éxito: solo username, nunca el token completo
             log.info("Login exitoso - usuario: {}", loginRequest.getUsername());
 
@@ -72,7 +79,7 @@ public class AuthController {
                     "token", token,
                     "tipo", "Bearer",
                     "username", userDetails.getUsername(),
-                    "roles", userDetails.getAuthorities().toString()
+                    "roles", roles
             ));
 
         } catch (Exception e) {
