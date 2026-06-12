@@ -55,7 +55,12 @@ public class UsuarioController {
         usuario.setUsername(dto.getUsername());
         usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
         
-        // Se asigna rol cliente por defecto por seguridad al crear nuevos usuarios
+        // Mapeo de los nuevos campos obligatorios
+        usuario.setNombre(dto.getNombre());
+        usuario.setApellido(dto.getApellido());
+        usuario.setEmail(dto.getEmail());
+        usuario.setDireccion(dto.getDireccion());
+        
         Rol rolCliente = rolService.findByNombre("ROLE_CLIENTE")
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado en el sistema"));
         
@@ -74,7 +79,12 @@ public class UsuarioController {
             Usuario usuario = usuarioExistente.get();
             usuario.setUsername(dto.getUsername());
             
-            // Solo actualiza la contraseña si se está enviando
+            // Actualización de los nuevos campos obligatorios
+            usuario.setNombre(dto.getNombre());
+            usuario.setApellido(dto.getApellido());
+            usuario.setEmail(dto.getEmail());
+            usuario.setDireccion(dto.getDireccion());
+            
             if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty()) {
                 usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
             }
@@ -95,7 +105,6 @@ public class UsuarioController {
         return ResponseEntity.notFound().build();
     }
 
-    // Método utilitario para mapear Entidad a DTO de salida
     private UsuarioResponseDTO mapToResponseDTO(Usuario usuario) {
         UsuarioResponseDTO dto = new UsuarioResponseDTO();
         dto.setId(usuario.getId());

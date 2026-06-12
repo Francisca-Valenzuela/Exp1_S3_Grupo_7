@@ -33,6 +33,10 @@ public class DataInitializer {
                 Usuario gerente = new Usuario();
                 gerente.setUsername("gerente");
                 gerente.setPassword(passwordEncoder.encode("gerente123"));
+                gerente.setNombre("Carlos");
+                gerente.setApellido("Ramírez");
+                gerente.setEmail("gerente@minimarket.cl");
+                gerente.setDireccion("Av. Providencia 1234, Santiago");
                 Set<Rol> roles = new HashSet<>();
                 roles.add(rolGerente);
                 gerente.setRoles(roles);
@@ -44,6 +48,10 @@ public class DataInitializer {
                 Usuario empleado = new Usuario();
                 empleado.setUsername("empleado");
                 empleado.setPassword(passwordEncoder.encode("empleado123"));
+                empleado.setNombre("Ana");
+                empleado.setApellido("González");
+                empleado.setEmail("empleado@minimarket.cl");
+                empleado.setDireccion("Calle Merced 456, Santiago");
                 Set<Rol> roles = new HashSet<>();
                 roles.add(rolEmpleado);
                 empleado.setRoles(roles);
@@ -55,6 +63,10 @@ public class DataInitializer {
                 Usuario cliente = new Usuario();
                 cliente.setUsername("cliente");
                 cliente.setPassword(passwordEncoder.encode("cliente123"));
+                cliente.setNombre("Pedro");
+                cliente.setApellido("Soto");
+                cliente.setEmail("cliente@minimarket.cl");
+                cliente.setDireccion("Pasaje Los Aromos 789, Santiago");
                 Set<Rol> roles = new HashSet<>();
                 roles.add(rolCliente);
                 cliente.setRoles(roles);

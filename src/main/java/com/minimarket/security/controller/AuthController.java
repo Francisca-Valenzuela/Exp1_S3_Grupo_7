@@ -1,5 +1,6 @@
 package com.minimarket.security.controller;
 
+import com.minimarket.dto.UsuarioRequestDTO; // Importación añadida
 import com.minimarket.entity.Rol;
 import com.minimarket.entity.Usuario;
 import com.minimarket.repository.RolRepository;
@@ -46,14 +47,8 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * Endpoint de autenticación (login).
-     * Valida credenciales y devuelve un JWT si son correctas.
-     * POST /api/auth/login
-     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
-        // Solo logueamos el username, NUNCA la contraseña ni el token completo
         log.info("Intento de inicio de sesión - usuario: {}", loginRequest.getUsername());
 
         try {
@@ -67,12 +62,10 @@ public class AuthController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = jwtUtil.generateToken(userDetails);
 
-            // Roles como lista para consistencia con el claim del JWT
             List<String> roles = userDetails.getAuthorities().stream()
-                    .map(a -> a.getAuthority())
+                    .map(GrantedAuthority -> GrantedAuthority.getAuthority())
                     .collect(Collectors.toList());
 
-            // Log de éxito: solo username, nunca el token completo
             log.info("Login exitoso - usuario: {}", loginRequest.getUsername());
 
             return ResponseEntity.ok(Map.of(
@@ -83,20 +76,14 @@ public class AuthController {
             ));
 
         } catch (Exception e) {
-            // No revelamos la razón exacta del fallo al cliente por seguridad
             log.warn("Fallo de autenticación - usuario: {}", loginRequest.getUsername());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales inválidas"));
         }
     }
 
-    /**
-     * Endpoint de registro de nuevos usuarios.
-     * Asigna el rol CLIENTE por defecto.
-     * POST /api/auth/registro
-     */
     @PostMapping("/registro")
-    public ResponseEntity<?> registro(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<?> registro(@Valid @RequestBody UsuarioRequestDTO request) { // Cambiado a UsuarioRequestDTO
         log.info("Iniciando proceso de registro - usuario: {}", request.getUsername());
 
         if (usuarioRepository.findByUsername(request.getUsername()).isPresent()) {
@@ -117,8 +104,14 @@ public class AuthController {
 
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setUsername(request.getUsername());
-        // Contraseña encriptada con BCrypt, nunca en texto plano
         nuevoUsuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        
+        // Mapeo de campos requeridos para evitar excepciones de columnas nulas
+        nuevoUsuario.setNombre(request.getNombre());
+        nuevoUsuario.setApellido(request.getApellido());
+        nuevoUsuario.setEmail(request.getEmail());
+        nuevoUsuario.setDireccion(request.getDireccion());
+        
         nuevoUsuario.setRoles(roles);
         usuarioRepository.save(nuevoUsuario);
 

@@ -1,5 +1,6 @@
 package com.minimarket.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -19,4 +20,24 @@ public class UsuarioRequestDTO {
     @NotBlank(message = "La contraseña no puede estar vacía")
     @Size(min = 6, max = 100, message = "La contraseña debe tener entre 6 y 100 caracteres")
     private String password;
+
+    // ─────────────────────────────────────────────
+    // NUEVOS CAMPOS OBLIGATORIOS PARA EL REGISTRO DE USUARIOS
+    // ─────────────────────────────────────────────
+    @NotBlank(message = "El nombre no puede estar vacío")
+    @Size(max = 50, message = "El nombre no puede superar los 50 caracteres")
+    private String nombre;
+
+    @NotBlank(message = "El apellido no puede estar vacío")
+    @Size(max = 50, message = "El apellido no puede superar los 50 caracteres")
+    private String apellido;
+
+    @NotBlank(message = "El email no puede estar vacío")
+    @Email(message = "El formato del email es inválido")
+    @Size(max = 100, message = "El email no puede superar los 100 caracteres")
+    private String email;
+
+    @NotBlank(message = "La dirección no puede estar vacía")
+    @Size(max = 150, message = "La dirección no puede superar los 150 caracteres")
+    private String direccion;
 }
